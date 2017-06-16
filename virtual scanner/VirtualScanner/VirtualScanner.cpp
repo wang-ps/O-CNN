@@ -532,8 +532,8 @@ bool VirtualScanner::save_binary(string filename, bool flags)
 	int num = n / 3;  // point number
 	outfile.write((char*)(&num), sizeof(int));
 	
-	int pt_n = 1 | 2; // has_point | has_normal
-	outfile.write((char*)(&pt_n), sizeof(int));
+ 	//int pt_n = 1 | 2; // has_point | has_normal
+ 	//outfile.write((char*)(&pt_n), sizeof(int));
 	
 	outfile.write((char*)pts_.data(), sizeof(float)*n);
 	outfile.write((char*)normals_.data(), sizeof(float)*n);	
