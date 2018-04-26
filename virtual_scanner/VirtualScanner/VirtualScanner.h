@@ -2,7 +2,7 @@
 #define  SINGLE_PRECISION
 
 #include <vector>
-#include <Eigen/dense>
+#include <Eigen/Dense>
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
@@ -43,7 +43,7 @@ typedef boost::optional< Tree::Intersection_and_primitive_id<Ray>::Type > Ray_in
 class VirtualScanner
 {
 public:
-	bool scanning(string filename, int view_num, bool flags);
+	bool scanning(string filename, int view_num, bool flags, bool normalize);
 
 protected:
 	bool save_ply(string filename);

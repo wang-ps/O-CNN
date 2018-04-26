@@ -161,7 +161,7 @@ bool read_mesh(std::string filename, MatrixXF& V, MatrixXi& F)
 	if (found != std::string::npos)
 	{
 		std::string suffix(filename, found + 1);
-		std::transform(suffix.begin(), suffix.end(), suffix.begin(), tolower);
+		std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
 
 		bool succ = false;
 		if (suffix == "obj")
@@ -286,7 +286,26 @@ void remove_zero_faces(MatrixXF& V, MatrixXi& F)
 	}
 }
 
-bool VirtualScanner::scanning(string filename, int view_num, bool flags)
+void normalize_mesh(MatrixXF& V)
+{
+	int size = V.size();
+	auto buffer = V.data();
+	float maxExtent = 0.0;
+	for (int j = 0; j < size; ++j)
+	{
+		float vertexExtent = fabs(buffer[j]);
+		if (vertexExtent > maxExtent)
+		{
+			maxExtent = vertexExtent;
+		}
+	}
+	for (int j = 0; j < size; ++j)
+	{
+		buffer[j] /= maxExtent;
+	}
+}
+
+bool VirtualScanner::scanning(string filename, int view_num, bool flags, bool normalize)
 {
 	if (view_num < 1) view_num = 1;
 	if (view_num > total_view_num_) view_num = total_view_num_;
@@ -295,6 +314,11 @@ bool VirtualScanner::scanning(string filename, int view_num, bool flags)
 	bool succ = read_mesh(filename, V_, F_);
 	if (!succ) return false;
 	
+	if (normalize)
+	{
+	    normalize_mesh(V_);
+	}
+
 	// remove zero-area faces and unreferenced vertices,
 	// otherwise, CGAL will collapse
 	remove_zero_faces(V_, F_);
