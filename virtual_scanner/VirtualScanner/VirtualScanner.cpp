@@ -43,7 +43,6 @@ bool read_obj(std::string filename, MatrixXF& V, MatrixXi& F)
 
 	// load V
 	V.resize(3, pVline.size());
-	#pragma omp parallel for
 	for (int i = 0; i < pVline.size(); i++)
 	{
 		char* p = strtok(pVline[i], " ");
@@ -56,7 +55,6 @@ bool read_obj(std::string filename, MatrixXF& V, MatrixXi& F)
 
 	// load F
 	F.resize(3, pFline.size());
-	#pragma omp parallel for
 	for (int i = 0; i < pFline.size(); i++)
 	{
 		char* p = strtok(pFline[i], " ");
