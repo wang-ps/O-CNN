@@ -18,12 +18,18 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VirtualScanner.cpp">
+    <ClCompile Include="points.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="virtual_scanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="VirtualScanner.h">
+    <ClInclude Include="points.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="virtual_scanner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

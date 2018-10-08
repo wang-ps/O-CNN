@@ -6,12 +6,11 @@ The code is based on [Boost](https://www.boost.org/), [CGAL](http://www.cgal.org
 
 `Note`: Sometimes, the executive file might collapse when the scale of the mesh is very large. This is one bug of CGAL. In order to mitigate this you can run VirtualScanner with the normalize flag set to 1.
 
+
 ## Running Virtual Scanner
 The pre-built executive file is contained in the folder `exe`, which has been test on the Win10 x64 system. 
 
     Usage:  
-	cout << "Usage: VirtualScanner.exe <file name/folder name> "
-		"[view_num] [flags] [normalize]" << endl;
         VirtualScanner.exe <file_name> [nviews] [flags] [normalize]
             file_name: the name of the file (*.obj; *.off) to be processed.
             nviews: the number of views for scanning. Default: 6
@@ -24,20 +23,36 @@ The pre-built executive file is contained in the folder `exe`, which has been te
 The result is in the format of `points`, which can be parsed with the following code:
 
 ```cpp
-void load_points(vector<float>& pts, vector<float>& normals, const string& filename)
-{
-    ifstream infile(filename, ios::binary);
+#include "points.h"
 
-    int n;
-    infile.read((char*)(&n), sizeof(int));
-    pts.resize(3 * n);      // x_1, y_1, z_1, ..., x_n, y_n, z_n
-    infile.read((char*)pts.data(), sizeof(float)*3*n);
-    normals.resize(3 * n);  // nx_1, ny_1, nz_1, ..., nx_n, ny_n, nz_n
-    infile.read((char*)normals.data(), sizeof(float)*3*n);
+// ...
+// Specify the filename of the points
+string filename = "your_pointcloud.points";
 
-    infile.close();
-}
+// Load points
+Points points;
+points.read_points(filename)
+
+// Point number
+int n =  points.info().pt_num();
+
+// Whether does the file contain point coordinates?
+bool has_points = points.info().has_property(PtsInfo::kPoint);
+// Get the pointer to points: x_1, y_1, z_1, ..., x_n, y_n, z_n
+const float* ptr_points = points.ptr(PtsInfo::kPoint);
+
+// Whether does the file contain normals?
+bool has_normals = points.info().has_property(PtsInfo::kNormal);
+// Get the pointer to normals: nx_1, ny_1, nz_1, ..., nx_n, ny_n, nz_n
+const float* ptr_points = points.ptr(PtsInfo::kNormal);
+
+// Whether does the file contain per-point labels?
+bool has_labels = points.info().has_property(PtsInfo::kLabel);
+// Get the pointer to labels: label_1, label_2, ..., label_n
+const float* ptr_labels = points.ptr(PtsInfo::kLabel);
 ```
+
+
 ## Building On Windows
 To build in Windows you can use [Vcpkg](https://github.com/Microsoft/vcpkg) to install/build all the dependencies. Note this takes a long time.
 ```
@@ -49,6 +64,7 @@ cd vcpkg
 ```
 Then to build, you can use the supplied solution file VirtualScanner.sln
 
+
 ## Building On Ubuntu
 To build with ubuntu, you can use apt for the dependencies.
 ```
@@ -56,7 +72,7 @@ apt-get install -y --no-install-recommends libboost-all-dev libcgal-dev libeigen
 ```
 Then you can use g++ to build the executable
 ```
-g++ main.cpp VirtualScanner.cpp  -O3 -DNDEBUG --std=c++11 -fPIC -Wall -Wno-sign-compare -Wno-uninitialized -fopenmp -lboost_filesystem -lboost_system -lCGAL -I /usr/include/eigen3 -o virtualscanner
+g++ main.cpp virtual_scanner.cpp points.cpp  -O3 -DNDEBUG --std=c++11 -fPIC -Wall -Wno-sign-compare -Wno-uninitialized -fopenmp -lboost_filesystem -lboost_system -lCGAL -I /usr/include/eigen3 -o virtualscanner
 ```
 
 
