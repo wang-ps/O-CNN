@@ -96,17 +96,36 @@ bool read_off(std::string filename, MatrixXf& V, MatrixXi& F) {
     return false;
   }
 
-  // eat head
-  std::string head;
-  infile >> head;
-  if (!(head == "OFF")) {
+  // face/vertex number
+  int nv, nf, ne;
+  char head[256];
+  bool succ = true;
+  infile >> head; // eat head
+  if (head[0] == 'O' && head[1] == 'F' && head[2] == 'F') {
+    if (head[3] == 0) {
+      infile >> nv >> nf >> ne;
+    } else if (head[3] == ' ') {
+      vector<char*> tokens;
+      char* pch = strtok(head + 3, " ");
+      while (pch != nullptr) {
+        tokens.push_back(pch);
+        pch = strtok(nullptr, " ");
+      }
+      if (tokens.size() != 3) {
+        std::cout << filename + " is not an OFF file!" << std::endl;
+        return false;
+      }
+      nv = atoi(tokens[0]);
+      nf = atoi(tokens[1]);
+      ne = atoi(tokens[2]);
+    } else {
+      std::cout << filename + " is not an OFF file!" << std::endl;
+      return false;
+    }
+  } else {
     std::cout << filename + " is not an OFF file!" << std::endl;
     return false;
   }
-
-  // face/vertex number
-  int nv, nf, ne;
-  infile >> nv >> nf >> ne;
 
   // get length of file
   int p1 = infile.tellg();
@@ -505,7 +524,7 @@ bool VirtualScanner::save_binary(string filename, bool flags) {
   bool succ = point_cloud_.set_points(pts_, normals_);
   if (!succ) {
     cout << "Warning: point_cloud_.set_points() failed!" << endl
-         << "Save one point instead!" << endl;
+        << "Save one point instead!" << endl;
     vector<float> vec{ 1.0f, 0, 0 };
     point_cloud_.set_points(vec, vec);
   }

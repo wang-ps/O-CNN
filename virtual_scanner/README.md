@@ -1,5 +1,7 @@
 # Virtual scanner for converting 3D model to point cloud
 
+**Attention:** DO not use this release if you clone the [O-CNN](https://github.com/Microsoft/O-CNN) code before 2018.10.09. You should checkout the version `5dc2240`.
+
 This folder contains the code for converting the 3D models to dense point clouds with normals (\*.points). As detailed in our paper, we build a virtual scanner and shoot rays to calculate the intersection point and oriented normal. 
 
 The code is based on [Boost](https://www.boost.org/), [CGAL](http://www.cgal.org/) and the [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) libraries. After configuring these three libraries properly, the code can be built with visual studio easily.
