@@ -1,9 +1,7 @@
-#include "points.h"
+#include "virtual_scanner/points.h"
 
+#include <cstring>
 #include <fstream>
-#include <Miniball.hpp>
-
-//#include "util.h"
 
 ////////////////////////
 const char PtsInfo::kMagicStr[16] = "_POINTS_1.0_";

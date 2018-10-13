@@ -10,7 +10,7 @@ The code is based on [Boost](https://www.boost.org/), [CGAL](http://www.cgal.org
 
 
 ## Running Virtual Scanner
-The pre-built executive file is contained in the folder `exe`, which has been test on the Win10 x64 system. 
+The pre-built executive file is contained in the folder `prebuilt_binaries`, which has been test on the Win10 x64 system. 
 
     Usage:  
         VirtualScanner.exe <file_name> [nviews] [flags] [normalize]
@@ -54,17 +54,22 @@ bool has_labels = points.info().has_property(PtsInfo::kLabel);
 const float* ptr_labels = points.ptr(PtsInfo::kLabel);
 ```
 
-
 ## Building On Windows
-To build in Windows you can use [Vcpkg](https://github.com/Microsoft/vcpkg) to install/build all the dependencies. Note this takes a long time.
-```
-git clone https://github.com/Microsoft/vcpkg
-cd vcpkg
-.\bootstrap-vcpkg.bat
-.\vcpkg integrate install
-.\vcpkg install cgal eigen3 boost --triplet x64-windows
-```
-Then to build, you can use the supplied solution file VirtualScanner.sln
+To build in Windows you can,
+
+1. Edit the project files to point to Boost, Eigen and CGAL,
+
+or 
+
+2. Use [Vcpkg](https://github.com/Microsoft/vcpkg) to install/build all the dependencies (note this takes a long time).
+  ```
+  git clone https://github.com/Microsoft/vcpkg
+  cd vcpkg
+  .\bootstrap-vcpkg.bat
+  .\vcpkg integrate install
+  .\vcpkg install cgal eigen3 boost --triplet x64-windows
+  ```
+  Then to build, you can use the supplied solution file VirtualScanner.sln
 
 
 ## Building On Ubuntu
@@ -72,11 +77,14 @@ To build with ubuntu, you can use apt for the dependencies.
 ```
 apt-get install -y --no-install-recommends libboost-all-dev libcgal-dev libeigen3-dev
 ```
-Then you can use g++ to build the executable
+Then you can use cmake to build the executable
+From this project's directory,
 ```
-g++ main.cpp virtual_scanner.cpp points.cpp  -O3 -DNDEBUG --std=c++11 -fPIC -Wall -Wno-sign-compare -Wno-uninitialized -fopenmp -lboost_filesystem -lboost_system -lCGAL -I /usr/include/eigen3 -o virtualscanner
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ../virtualscanner/
+make
 ```
-
 
 If you use our code, please cite our paper.
 

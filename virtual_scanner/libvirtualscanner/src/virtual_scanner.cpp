@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
-#include "virtual_scanner.h"
+#include <sstream>
+#include "virtual_scanner/virtual_scanner.h"
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
@@ -15,21 +16,29 @@ using Eigen::VectorXf;
 using Eigen::VectorXi;
 using Eigen::Matrix3f;
 
-typedef Eigen::Matrix<bool, Eigen::Dynamic, 1>                          VectorXb;
-typedef CGAL::Simple_cartesian<float>							                      K;
-typedef K::FT 													                                FT;
-typedef K::Ray_3												                                Ray;
-typedef K::Line_3 												                              Line;
-typedef K::Point_3  											                              Point;
-typedef K::Triangle_3  											                            Triangle;
-typedef std::vector<Triangle>::iterator 						                    Iterator;
-typedef CGAL::AABB_triangle_primitive<K, Iterator>  			              Primitive;
-typedef CGAL::AABB_traits<K, Primitive>							                    AABB_triangle_traits;
-typedef CGAL::AABB_tree<AABB_triangle_traits>					                  Tree;
-typedef Tree::Point_and_primitive_id							                      Point_and_primitive_id;
-typedef boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
+typedef Eigen::Matrix<bool, Eigen::Dynamic, 1>                                 VectorXb;
+typedef CGAL::Simple_cartesian<float>                                          K;
+typedef K::FT                                                                  FT;
+typedef K::Ray_3                                                               Ray;
+typedef K::Line_3                                                              Line;
+typedef K::Point_3                                                             Point;
+typedef K::Triangle_3                                                          Triangle;
+typedef std::vector<Triangle>::iterator                                        Iterator;
+typedef CGAL::AABB_triangle_primitive<K, Iterator>                             Primitive;
+typedef CGAL::AABB_traits<K, Primitive>                                        AABB_triangle_traits;
+typedef CGAL::AABB_tree<AABB_triangle_traits>                                  Tree;
+typedef Tree::Point_and_primitive_id                                           Point_and_primitive_id;
+typedef boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type>        Ray_intersection;
 
 const float EPS = 1.0e-20;
+
+#ifdef _MSC_VER
+inline char *strtok_r(char *str, const char *delim, char **saveptr)
+{
+    return strtok(str, delim);
+}
+#else
+#endif
 
 bool read_obj(std::string filename, MatrixXf& V, MatrixXi& F) {
   std::ifstream infile(filename, std::ifstream::binary);
@@ -51,7 +60,8 @@ bool read_obj(std::string filename, MatrixXf& V, MatrixXi& F) {
 
   // parse buffer data
   std::vector<char*> pVline, pFline;
-  char* pch = strtok(buffer, "\n");
+  char* save;
+  char* pch = strtok_r(buffer, "\n", &save);
   while (pch != nullptr) {
     if (pch[0] == 'v' && pch[1] == ' ') {
       pVline.push_back(pch + 2);
@@ -59,17 +69,17 @@ bool read_obj(std::string filename, MatrixXf& V, MatrixXi& F) {
       pFline.push_back(pch + 2);
     }
 
-    pch = strtok(nullptr, "\n");
+    pch = strtok_r(nullptr, "\n", &save);
   }
 
   // load V
   V.resize(3, pVline.size());
   //#pragma omp parallel for
   for (int i = 0; i < pVline.size(); i++) {
-    char* p = strtok(pVline[i], " ");
+    char* p = strtok_r(pVline[i], " ", &save);
     for (int j = 0; j < 3; j++) {
       V(j, i) = atof(p);
-      p = strtok(nullptr, " ");
+      p = strtok_r(nullptr, " ", &save);
     }
   }
 
@@ -77,10 +87,10 @@ bool read_obj(std::string filename, MatrixXf& V, MatrixXi& F) {
   F.resize(3, pFline.size());
   //#pragma omp parallel for
   for (int i = 0; i < pFline.size(); i++) {
-    char* p = strtok(pFline[i], " ");
+    char* p = strtok_r(pFline[i], " ", &save);
     for (int j = 0; j < 3; j++) {
       F(j, i) = atoi(p) - 1;
-      p = strtok(nullptr, " ");
+      p = strtok_r(nullptr, " ", &save);
     }
   }
 
@@ -100,16 +110,17 @@ bool read_off(std::string filename, MatrixXf& V, MatrixXi& F) {
   int nv, nf, ne;
   char head[256];
   bool succ = true;
+  char* save;
   infile >> head; // eat head
   if (head[0] == 'O' && head[1] == 'F' && head[2] == 'F') {
     if (head[3] == 0) {
       infile >> nv >> nf >> ne;
     } else if (head[3] == ' ') {
       vector<char*> tokens;
-      char* pch = strtok(head + 3, " ");
+      char* pch = strtok_r(head + 3, " ", &save);
       while (pch != nullptr) {
         tokens.push_back(pch);
-        pch = strtok(nullptr, " ");
+        pch = strtok_r(nullptr, " ", &save);
       }
       if (tokens.size() != 3) {
         std::cout << filename + " is not an OFF file!" << std::endl;
@@ -145,19 +156,19 @@ bool read_off(std::string filename, MatrixXf& V, MatrixXi& F) {
   // parse buffer data
   std::vector<char*> pV;
   pV.reserve(3 * nv);
-  char* pch = strtok(buffer, " \r\n");
+  char* pch = strtok_r(buffer, " \r\n", &save);
   pV.push_back(pch);
   for (int i = 1; i < 3 * nv; i++) {
-    pch = strtok(nullptr, " \r\n");
+    pch = strtok_r(nullptr, " \r\n", &save);
     pV.push_back(pch);
   }
   std::vector<char*> pF;
   pF.reserve(3 * nf);
   for (int i = 0; i < nf; i++) {
     // eat the first data
-    pch = strtok(nullptr, " \r\n");
+    pch = strtok_r(nullptr, " \r\n", &save);
     for (int j = 0; j < 3; j++) {
-      pch = strtok(nullptr, " \r\n");
+      pch = strtok_r(nullptr, " \r\n", &save);
       pF.push_back(pch);
     }
   }
@@ -165,7 +176,7 @@ bool read_off(std::string filename, MatrixXf& V, MatrixXi& F) {
   // load vertex
   V.resize(3, nv);
   float* p = V.data();
-  #pragma omp parallel for
+//  #pragma omp parallel for
   for (int i = 0; i < 3 * nv; i++) {
     *(p + i) = atof(pV[i]);
   }
@@ -173,7 +184,7 @@ bool read_off(std::string filename, MatrixXf& V, MatrixXi& F) {
   // load face
   F.resize(3, nf);
   int* q = F.data();
-  #pragma omp parallel for
+//  #pragma omp parallel for
   for (int i = 0; i < 3 * nf; i++) {
     *(q + i) = atoi(pF[i]);
   }
@@ -208,7 +219,7 @@ void compute_face_normal(MatrixXf& Nf, VectorXf& f_areas,
   Nf.resize(3, nf);
   f_areas.resize(nf);
 
-  #pragma omp parallel for
+  //#pragma omp parallel for
   for (int i = 0; i < nf; i++) {
     Vector3f p01 = V.col(F(1, i)) - V.col(F(0, i));
     Vector3f p02 = V.col(F(2, i)) - V.col(F(0, i));
@@ -346,7 +357,7 @@ bool VirtualScanner::scanning(string filename, int view_num, bool flags, bool no
   int Num = view_num * W * W;
   MatrixXf buffer_pt(3, Num), buffer_n(3, Num);
   VectorXi buffer_flag = VectorXi::Constant(Num, 0);
-  #pragma omp parallel for
+  //#pragma omp parallel for
   for (int i = 0; i < Num; ++i) {
     int y = i % W - resolution_;
     int j = i / W;
@@ -498,7 +509,7 @@ bool VirtualScanner::save_ply(string filename) {
   const int len = 128;
   char* buffer = new char[n * len];
   char* pstr = buffer;
-  #pragma omp parallel for
+  //#pragma omp parallel for
   for (int i = 0; i < n; ++i) {
     sprintf(pstr + i * len,
         "%.6f %.6f %.6f %.6f %.6f %.6f\n",
