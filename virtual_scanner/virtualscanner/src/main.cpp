@@ -2,7 +2,7 @@
 #include <string>
 #include <time.h>
 #include <boost/filesystem.hpp>
-#include "virtual_scanner.h"
+#include "virtual_scanner/virtual_scanner.h"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   vector<string> all_files;
   get_all_filenames(all_files, filename);
 
-  //#pragma omp parallel for
+  #pragma omp parallel for
   for (int i = 0; i < all_files.size(); i++) {
     clock_t t1 = clock();
     VirtualScanner scanner;
@@ -37,6 +37,7 @@ int main(int argc, char* argv[]) {
 
     string messg = all_files[i].substr(all_files[i].rfind('\\') + 1) +
         " done! Time: " + to_string(t2 - t1) + "\n";
+    #pragma omp critical
     cout << messg;
   }
 
