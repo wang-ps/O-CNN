@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvirtualscanner", "libvirtualscanner\libvirtualscanner.vcxproj", "{132C8DB6-16EE-48B2-9D52-0A6D5777854E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvirtualscanner", "cpp\libvirtualscanner\libvirtualscanner.vcxproj", "{132C8DB6-16EE-48B2-9D52-0A6D5777854E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "virtualscanner", "virtualscanner\virtualscanner.vcxproj", "{8C7CF56A-4830-4858-A90E-5DA7BE887951}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "virtualscanner", "cpp\virtualscanner\virtualscanner.vcxproj", "{8C7CF56A-4830-4858-A90E-5DA7BE887951}"
 	ProjectSection(ProjectDependencies) = postProject
 		{132C8DB6-16EE-48B2-9D52-0A6D5777854E} = {132C8DB6-16EE-48B2-9D52-0A6D5777854E}
 	EndProjectSection
