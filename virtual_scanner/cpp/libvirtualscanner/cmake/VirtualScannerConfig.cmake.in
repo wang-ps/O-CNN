@@ -13,8 +13,8 @@ if(NOT VCPKG_TOOLCHAIN)
     list(REMOVE_AT CMAKE_MODULE_PATH -1)
 endif()
 
-if(NOT TARGET VirtualScanner::VirtualScanner)
+if(NOT TARGET OCNN::VirtualScanner)
     include("${VirtualScanner_CMAKE_DIR}/VirtualScannerTargets.cmake")
 endif()
 
-set(VirtualScanner_LIBRARIES VirtualScanner::VirtualScanner)
+set(VirtualScanner_LIBRARIES OCNN::VirtualScanner)

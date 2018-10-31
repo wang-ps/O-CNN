@@ -15,12 +15,12 @@ using Eigen::MatrixXi;
 
 class VirtualScanner {
  public:
-  bool scanning(string filename, int view_num, bool flags, bool normalize);
+  bool scanning(const string& filename, int view_num, bool flags, bool normalize);
+  bool save_binary(const string& filename);
+  bool save_ply(const string& filename);
 
  protected:
-  bool save_ply(string filename);
-  bool save_binary(string filename, bool flags);
-  bool save_binary_legacy(string filename, bool flags);
+  bool save_binary_legacy(const string& filename);
   void calc_views();
 
  protected:
@@ -41,6 +41,7 @@ class VirtualScanner {
 
   const int resolution_ = 127;
   const int total_view_num_ = 14;
+
 };
 
 #endif // _VIRTUAL_SCANNER_

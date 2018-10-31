@@ -37,10 +37,9 @@ inline char *strtok_r(char *str, const char *delim, char **saveptr)
 {
     return strtok(str, delim);
 }
-#else
 #endif
 
-bool read_obj(std::string filename, MatrixXf& V, MatrixXi& F) {
+bool read_obj(const string& filename, MatrixXf& V, MatrixXi& F) {
   std::ifstream infile(filename, std::ifstream::binary);
   if (!infile) {
     std::cout << "Open OBJ file error!" << std::endl;
@@ -99,7 +98,7 @@ bool read_obj(std::string filename, MatrixXf& V, MatrixXi& F) {
   return true;
 }
 
-bool read_off(std::string filename, MatrixXf& V, MatrixXi& F) {
+bool read_off(const string& filename, MatrixXf& V, MatrixXi& F) {
   std::ifstream infile(filename, std::ios::binary);
   if (!infile) {
     std::cout << "Open " + filename + " error!" << std::endl;
@@ -194,10 +193,10 @@ bool read_off(std::string filename, MatrixXf& V, MatrixXi& F) {
   return true;
 }
 
-bool read_mesh(std::string filename, MatrixXf& V, MatrixXi& F) {
+bool read_mesh(const string& filename, MatrixXf& V, MatrixXi& F) {
   size_t found = filename.rfind('.');
-  if (found != std::string::npos) {
-    std::string suffix(filename, found + 1);
+  if (found != string::npos) {
+    string suffix(filename, found + 1);
     std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
 
     bool succ = false;
@@ -315,7 +314,7 @@ void normalize_mesh(MatrixXf& V) {
   }
 }
 
-bool VirtualScanner::scanning(string filename, int view_num, bool flags, bool normalize) {
+bool VirtualScanner::scanning(const string& filename, int view_num, bool flags, bool normalize) {
   if (view_num < 1) view_num = 1;
   if (view_num > total_view_num_) view_num = total_view_num_;
 
@@ -414,21 +413,27 @@ bool VirtualScanner::scanning(string filename, int view_num, bool flags, bool no
 
   // get points and normals
   pts_.clear();
+  pts_.reserve(Num * 3);
   normals_.clear();
+  normals_.reserve(Num * 3);
+  flags_.clear();
+  flags_.reserve(Num * 3);
+
   for (int i = 0; i < Num; ++i) {
     if (buffer_flag(i) != 0) {
       for (int j = 0; j < 3; ++j) {
         pts_.push_back(buffer_pt(j, i));
         normals_.push_back(buffer_n(j, i));
       }
-      flags_.push_back(buffer_flag(i));
+      if (flags) {
+          flags_.push_back(buffer_flag(i));
+      }
     }
   }
 
+
   // save
-  string filename_pc = filename.substr(0, filename.rfind('.'));
   //save_ply(filename_pc + "_pc.ply");
-  save_binary(filename_pc + ".points", flags);
   return true;
 }
 
@@ -483,7 +488,7 @@ void VirtualScanner::calc_views() {
   }
 }
 
-bool VirtualScanner::save_ply(string filename) {
+bool VirtualScanner::save_ply(const string& filename) {
   ofstream outfile(filename, std::ios::binary);
   if (!outfile) {
     cout << "Open " << filename << "error!" << endl;
@@ -531,7 +536,7 @@ bool VirtualScanner::save_ply(string filename) {
   return true;
 }
 
-bool VirtualScanner::save_binary(string filename, bool flags) {
+bool VirtualScanner::save_binary(const string& filename) {
   bool succ = point_cloud_.set_points(pts_, normals_);
   if (!succ) {
     cout << "Warning: point_cloud_.set_points() failed!" << endl
@@ -545,7 +550,7 @@ bool VirtualScanner::save_binary(string filename, bool flags) {
   return succ;
 }
 
-bool VirtualScanner::save_binary_legacy(string filename, bool flags) {
+bool VirtualScanner::save_binary_legacy(const string& filename) {
   ofstream outfile(filename, std::ios::binary);
   if (!outfile) {
     cout << "Opening file error!" << endl;
@@ -565,7 +570,7 @@ bool VirtualScanner::save_binary_legacy(string filename, bool flags) {
 
   outfile.close();
 
-  if (flags) {
+  if (!flags_.empty()) {
     string filename_flag = filename;
     filename_flag.replace(filename.rfind('.') + 1, string::npos, "flags");
     outfile.open(filename_flag, std::ios::binary);
