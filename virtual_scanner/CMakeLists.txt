@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.3)
 
 if(SKBUILD)
     project(python_ocnn VERSION 18.10.09)
