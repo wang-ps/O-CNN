@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.3)
 project(libvirtualscanner VERSION 18.10.09 LANGUAGES CXX)
 
 if(NOT VCPKG_TOOLCHAIN)
