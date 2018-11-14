@@ -8,6 +8,7 @@ setup(
     author_email="dapisani@microsoft.com",
     packages=['ocnn', 'ocnn.virtualscanner'],
     zip_safe=False,
+    install_requires=['Cython', 'pyyaml'],
     package_dir={'': 'python'},
     package_data={'ocnn.virtualscanner': ['*.pxd']}
 )
