@@ -399,7 +399,6 @@ bool VirtualScanner::scanning(const string& filename, int view_num, bool flags, 
       Vector3f normal = N_.col(id);
       int flag = 1;
       if (normal.dot(view_dir_[v]) < 0) {
-        continue;
         normal = -normal;
         flag = -1;
       }

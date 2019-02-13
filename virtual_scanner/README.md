@@ -1,12 +1,13 @@
 # Virtual scanner for converting 3D model to point cloud
 
-**Attention:** DO not use this release if you clone the [O-CNN](https://github.com/Microsoft/O-CNN) code before 2018.10.09. You should checkout the version `5dc2240`.
 
 This folder contains the code for converting the 3D models to dense point clouds with normals (\*.points). As detailed in our paper, we build a virtual scanner and shoot rays to calculate the intersection point and oriented normal. 
 
 The code is based on [Boost](https://www.boost.org/), [CGAL](http://www.cgal.org/) and the [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) libraries. After configuring these three libraries properly, the code can be built with visual studio easily.
 
-`Note`: Sometimes, the executive file might collapse when the scale of the mesh is very large. This is one bug of CGAL. In order to mitigate this you can run VirtualScanner with the normalize flag set to 1.
+`Note`: 
+1. Sometimes, the executive file might collapse when the scale of the mesh is very large. This is one bug of CGAL. In order to mitigate this you can run VirtualScanner with the normalize flag set to 1.
+2. The format of some off files in the `ModelNet40` is invalid. Before running the virtual scanner, fix the `ModelNet40` with this [script](https://github.com/Microsoft/O-CNN/blob/master/ocnn/octree/python/ocnn/utils/off_utils.py).
 
 
 ## Running Virtual Scanner
